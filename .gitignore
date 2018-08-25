@@ -1,0 +1,16 @@
+# Folien und Übungen:
+or*.pdf
+
+# LaTeX-Dateien:
+*.aux
+*.log
+*.out
+*.fdb_latexmk
+*.fls
+*.xdv
+
+# LPSolve, siehe http://lpsolve.sourceforge.net/
+lpsolve_*
+
+# Python-Kram:
+__pycache__/

@@ -1,0 +1,1506 @@
+\documentclass[
+%% alle weiteren Papierformat einstellbar:
+a4paper, %apaper,
+%% keine Seitenzahlen:
+%empty,
+%% Schriftgröße (12pt, 11pt (Standard)):
+11pt,
+%% kleinere Überschriften:
+%smallheadings,
+]
+{scrartcl}
+
+\input{packages.tex}
+
+\fancyhead[L]{Operations Research}
+\fancyhead[C]{}
+%\fancyhead[R]{}
+%\fancyfoot[L]{}
+%\fancyfoot[C]{\thepage}
+\fancyfoot[C]{\thepage\,/\,\pageref{LastPage}}
+
+\newcommand{\dist}{\text{d}}
+\newcommand{\vor}{\text{vor}}
+\newcommand{\nil}{\text{nil}}
+
+\DeclareSIUnit\EUR{EUR}
+\DeclareSIUnit\USD{USD}
+\DeclareSIUnit\GBP{GBP}
+\DeclareSIUnit\JPY{JPY}
+\DeclareSIUnit\RUB{RUB}
+\DeclareSIUnit\CHF{CHF}
+
+\begin{document}
+
+\section{Übungen}%
+\label{sec:ubungen}
+
+\subsection{Übung 1}%
+\label{sub:ubung_1}
+
+\paragraph{Aufgabe 1}%
+\label{par:aufgabe_1}
+Lösen Sie das folgende LP mit dem Simplex-Algorithmus:
+\begin{gather*}
+  \max \quad x_1 + 3 x_2 - x_3\\
+  \begin{aligned}
+    \textup{unter}
+    \quad
+    2 x_1 + 2 x_2 - x_3 & \leq 10\\
+    3 x_1 - 2 x_2 + x_3 & \leq 10\\
+    x_1   - 3 x_2 + x_3 & \leq 10\\
+    x_1, x_2, x_3       & \geq 0
+  \end{aligned}
+\end{gather*}
+
+Zuerst führen wir die Schlupfvariablen für die übrigbleibenden Kapazitäten der
+einzelnen Nebenbedingungen ein:
+\begin{align*}
+  \begin{array}{rcccrcrcr}
+    x_4 & = & 10 & - & 2 x_1 & - & 2 x_2 & + & x_3\\
+    x_5 & = & 10 & - & 3 x_1 & + & 2 x_2 & - & x_3\\
+    x_6 & = & 10 & - & x_1   & + & 3 x_2 & - & x_3\\
+    \midrule
+    z   & = &    &   & x_1   & + & 3 x_2 & - & x_3
+  \end{array}
+\end{align*}
+Die Variable mit dem höchsten Koeffizienten in der Zielfunktion ist $x_2$, also
+ist $x_2$ die Pivotspalte. Für die Pivotzeile müssen wir
+$\min \left\{
+  \frac{\bar{b}_i}{\bar{a}_{ik}} \mid i \in B, \bar{a}_{ik} > 0
+  \right\}$
+finden. Berechnen wir diese:
+\begin{align*}
+  \begin{array}{rcccrcrcrcr}
+    x_4 & = & 10 & - & 2 x_1 & - & 2 x_2 & + & x_3 & & 2/10 = 5\\
+    x_5 & = & 10 & - & 3 x_1 & + & 2 x_2 & - & x_3 & & \rot{-2/10 < 0}\\
+    x_6 & = & 10 & - & x_1   & + & 3 x_2 & - & x_3 & & \rot{-3/10 < 0}\\
+    \midrule
+    z   & = &    &   & x_1   & + & 3 x_2 & - & x_3
+  \end{array}
+\end{align*}
+Damit ist $x_4$ unsere Pivotzeile. Jetzt wird $x_2$ eine neue Basisvariable,
+also müssen wir die erste Zeile nach $x_2$ auflösen und in den restlichen Zeilen
+$x_2$ ersetzen. Erstmal auflösen:
+\begin{align*}
+  \begin{array}{rcccrcrcr}
+    x_2 & = & 5  & - & x_1   & + & \frac{1}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5 & = & 10 & - & 3 x_1 & + & 2 x_2           & - & x_3\\
+    x_6 & = & 10 & - & x_1   & + & 3 x_2           & - & x_3\\
+    \midrule
+    z   & = &    &   & x_1   & + & 3 x_2           & - & x_3
+  \end{array}
+\end{align*}
+Dann $x_2$ in den restlichen Zeilen einsetzen:
+\begin{align*}
+  \def\arraystretch{1.5}
+  \begin{array}{rcccrcrcr}
+    x_2 & = & 5  & - & x_1   & + & \frac{1}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5 & = & 10 & - & 3 x_1 & + & 2 (5 - x_1 + \frac{1}{2} x_3 - \frac{1}{2} x_4) & - & x_3\\
+    x_6 & = & 10 & - & x_1   & + & 3 (5 - x_1 + \frac{1}{2} x_3 - \frac{1}{2} x_4) & - & x_3\\\midrule
+    z   & = &    &   & x_1   & + & 3 (5 - x_1 + \frac{1}{2} x_3 - \frac{1}{2} x_4) & - & x_3
+  \end{array}
+\end{align*}
+Und vereinfachen:
+\begin{align*}
+  \def\arraystretch{1.5}
+  \begin{array}{rcccrcrcr}
+    x_2 & = & 5  & - & x_1   & + & \frac{1}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5 & = & 20 & - & 5 x_1 &   &                 & - & x_4\\
+    x_6 & = & 25 & - & 4 x_1 & + & \frac{1}{2} x_3 & - & \frac{3}{2} x_4\\\midrule
+    z   & = & 15 & - & 2 x_1 & + & \frac{1}{2} x_3 & - & \frac{3}{2} x_4
+  \end{array}
+\end{align*}
+In der Zielfunktion hat $x_3$ den höchsten Anstieg, also ist es die Pivotspalte.
+Wir suchen die Pivotzeile:
+\begin{align*}
+  \def\arraystretch{1.5}
+  \begin{array}{rcccrcrcrcr}
+    x_2 & = & 5  & - & x_1   & + & \frac{1}{2} x_3 & - & \frac{1}{2} x_4 & & \rot{5/(-1/2) < 0}\\
+    x_5 & = & 20 & - & 5 x_1 &   &                 & - & x_4\\
+    x_6 & = & 25 & - & 4 x_1 & + & \frac{1}{2} x_3 & - & \frac{3}{2} x_4 & & \rot{25/(-1/2) < 0}\\
+    \midrule
+    z   & = & 15 & - & 2 x_1 & + & \frac{1}{2} x_3 & - & \frac{3}{2} x_4
+  \end{array}
+\end{align*}
+Da alle $\bar{a}_{i3} > 0$ sind, ist das LOP unbeschränkt und damit nicht
+lösbar.
+
+\paragraph{Aufgabe 2}%
+\label{par:aufgabe_2}
+Wenn Sie ein LP mit dem Simplex-Algorithmus lösen: woran erkennen Sie, ob das LP
+unendlich viele optimale Lösungen hat?
+
+Ermitteln Sie \textit{alle} optimalen Lösungen des folgenden LP mit dem
+Simplex-Algorithmus:
+\begin{gather*}
+  \max \quad 6x_1 + 12x_2 + 4x_3\\
+  \begin{aligned}
+    \textup{unter}
+    \quad
+    3x_1 + 6x_2 + 2x_3 & \leq 6\\
+    -x_1 + 2x_2        & \leq 2\\
+    x_1, x_2, x_3      & \geq 0
+  \end{aligned}
+\end{gather*}
+
+Schauen wir mal, wie weit wir kommen. Schlupfvariablen:
+\begin{align*}
+  \begin{array}{rcrcrcrcr}
+    x_4 & = & 6 & - & 3 x_1 & - & 6 x_2 & - & 2 x_3\\
+    x_5 & = & 2 & + &   x_1 & - & 2 x_2\\
+    \midrule
+    z   & = &   &   & 6 x_1 & + & 12 x_2 & + & 4 x_3
+  \end{array}
+\end{align*}
+Damit ist $x_2$ die Pivotspalte. Für die Pivotzeile berechnen wir:
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_4 & = & 6 & - & 3 x_1 & - &  6 x_2 & - & 2 x_3 & & 6/6 = 1\\
+    x_5 & = & 2 & + &   x_1 & - &  2 x_2 &   &       & & 2/2 = 1\\
+    \midrule
+    z   & = &   &   & 6 x_1 & + & 12 x_2 & + & 4 x_3
+  \end{array}
+\end{align*}
+Damit können wir sowohl $x_4$ und $x_5$ als Pivotzeile wählen. Machen wir eine
+Fallunterscheidung:
+\begin{description}
+  \item[$x_4$:] Erstmal die Pivotzeile umstellen:
+    \def\arraystretch{1.5}
+    \begin{align*}
+      \begin{array}{rcrcrcrcr}
+        x_2      & = & 1 & - & \frac{1}{2} x_1 & - & \frac{1}{3} x_3 & - & \frac{1}{6} x_4\\
+        x_5      & = & 2 & + & x_1             & - & 2 x_2\\
+        \midrule
+        z        & = &   &   & 6 x_1           & + & 12 x_2          & + & 4 x_3
+      \end{array}
+    \end{align*}
+
+    Dann $x_2$ ersetzen:
+    \def\arraystretch{1.5}
+    \begin{align*}
+      \begin{array}{rcrcrcrcr}
+        x_2      & = & 1  & - & \frac{1}{2} x_1 & - & \frac{1}{3} x_3 & - & \frac{1}{6} x_4\\
+        x_5      & = &    &   & 2 x_1           & + & \frac{2}{3} x_3 & + & \frac{1}{3} x_4\\
+        \midrule
+        z        & = & 12 &   &                 &   &                 & - & 2 x_4
+      \end{array}
+    \end{align*}
+
+    Damit haben wir die erste Lösung schon gefunden: $x_2 = 1$ und $x_5 = 0$.
+    Alle anderen sind gleich $0$.
+    Genauer gesagt ist unsere erste Lösung
+    $(x_1, x_2, x_3, x_4, x_5) = (0, 1, 0, 0, 0)$.
+
+  \item[$x_5$:] Wieder die Pivotzeile (jetzt $x_5$ nach $x_2$) umstellen und
+    einsetzen:
+    \begin{align*}
+      \begin{array}{rcrcrcrcr}
+        x_4      & = &    & - & 6 x_1           & - & 2 x_3 & + & 3 x_5\\
+        x_2      & = & 1  & + & \frac{1}{2} x_1 &   &       & - & \frac{1}{2} x_5\\
+        \midrule
+        z        & = & 12 & + & 12 x_1          & + & 4 x_3 & - & 6 x_5
+      \end{array}
+    \end{align*}
+
+    Die neue Pivotspalte ist jetzt $x_1$. Wenn wir die Pivotzeile wählen wollen,
+    dann erhalten wir:
+    \begin{align*}
+      \begin{array}{rcrcrcrcrcr}
+        x_4      & = &    & - & 6 x_1           & - & 2 x_3 & + & 3 x_5           &  & 0/6 = 0\\
+        x_2      & = & 1  & + & \frac{1}{2} x_1 &   &       & - & \frac{1}{2} x_5 &  & 1/(-1/2) < 0\\
+        \midrule
+        z        & = & 12 & + & 12 x_1          & + & 4 x_3 & - & 6 x_5
+      \end{array}
+    \end{align*}
+    Hier ist keine weitere Verbesserung möglich und wir bekommen die Lösung, die
+    wir auch schon vorher hatten:
+    $(x_1, x_2, x_3, x_4, x_5) = (0, 1, 0, 0, 0)$.
+\end{description}
+
+Die einzige Möglichkeit für weitere Lösungen wäre, wenn wir weiter
+Basisvariablen tauschen, auch wenn sich dadurch am Maximalwert der Zielfunktion
+nichts mehr ändert. Schauen wir mal was passiert, wenn wir die Darstellung von
+$x_5$ weiterrechnen.
+\def\arraystretch{1.5}
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_4      & = &    & - & 6 x_1           & - & 2 x_3 & + & 3 x_5           &  & 0/6 = 0\\
+    x_2      & = & 1  & + & \frac{1}{2} x_1 &   &       & - & \frac{1}{2} x_5 &  & 1/(-1/2) < 0\\
+    \midrule
+    z        & = & 12 & + & 12 x_1          & + & 4 x_3 & - & 6 x_5
+  \end{array}
+\end{align*}
+Tauschen wir $x_4$ gegen $x_1$. Umstellen und einsetzen liefert:
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_1      & = &    & - & \frac{1}{3} x_3 & - & \frac{1}{6} x_4  & + & \frac{1}{2} x_5\\
+    x_2      & = & 1  & - & \frac{1}{6} x_3 & - & \frac{1}{12} x_4 & - & \frac{1}{4} x_5\\
+    \midrule
+    z        & = & 12 &   &                 & - & 2 x_4
+  \end{array}
+\end{align*}
+Na das hat nix gebracht. Tolle Wurst. Kann ja auch nix bringen.
+
+Nehmen wir mal den letzten Stand vom Fall $x_4$ her:
+\begin{align*}
+  \begin{array}{rcrcrcrcr}
+    x_2      & = & 1  & - & \frac{1}{2} x_1 & - & \frac{1}{3} x_3 & - & \frac{1}{6} x_4\\
+    x_5      & = &    &   & 2 x_1           & + & \frac{2}{3} x_2 & + & \frac{1}{3} x_4\\
+    \midrule
+    z        & = & 12 &   &                 &   &                 & - & 2 x_4
+  \end{array}
+\end{align*}
+Und tauschen hier $x_2$ durch $x_1$. Umstellen und einsetzen liefert:
+\begin{align*}
+  \begin{array}{rcrcrcrcr}
+    x_1 & = & 2 & - & 2 x_2            & - & \frac{2}{3} x_3 & - & \frac{1}{3} x_4\\
+    x_5 & = & 4 & - & \frac{10}{3} x_2 & - & \frac{4}{3} x_3 & - & \frac{1}{3} x_4\\
+    \midrule
+    z        & = & 12 &   &       &   &                 & - & 2 x_4
+  \end{array}
+\end{align*}
+Damit hätten wir $(x_1, x_2, x_3, x_4, x_5) = (2, 0, 0, 0, 4)$.
+
+Für die nächste Lösung tauschen wir $x_5$ gegen $x_3$ und erhalten:
+\begin{align*}
+  \begin{array}{rcrcrcrcr}
+    x_1      & = &    & - & \frac{1}{3} x_2 & - & \frac{1}{6} x_4 & + & \frac{1}{2} x_5\\
+    x_3      & = & 3  & - & \frac{5}{2} x_2 & - & \frac{1}{4} x_4 & - & \frac{3}{4} x_5\\
+    \midrule
+    z        & = & 12 &   &                 &   &                 & - & 2 x_4
+  \end{array}
+\end{align*}
+Das liefert uns die Lösung $(x_1, x_2, x_3, x_4, x_5) = (0, 0, 3, 0, 0)$.
+
+Und das soll auch erstmal reichen. Es gibt also unendlich viele Lösungen, die
+folgende Form haben:
+\begin{align*}
+  \left\{
+    \lambda_1
+    \begin{pmatrix}
+      2\\
+      0\\
+      0
+    \end{pmatrix}
+    +
+    \lambda_2
+    \begin{pmatrix}
+      0\\
+      1\\
+      0
+    \end{pmatrix}
+    +
+    \lambda_3
+    \begin{pmatrix}
+      0\\
+      0\\
+      3
+    \end{pmatrix}
+    \mid
+    \lambda_1 + \lambda_2 + \lambda_3 = 1
+  \right\}
+\end{align*}
+
+\paragraph{Aufgabe 3}%
+\label{par:aufgabe_3}
+Lösen Sie folgende LPs mit der 2-Phasen-Methode. Deuten Sie graphisch den
+fortschreitenden Lösungsgang an:
+\begin{equation}
+  \begin{gathered}
+    \max \quad 2x_1 + x_2\\
+    \begin{aligned}
+      \textup{unter}
+      \quad
+      x_1 + x_2  & \geq 8\\
+      3x_1 + x_2 & \geq 12\\
+      x_1 + x_2  & \leq 10\\
+      x_1, x_2   & \geq 0
+    \end{aligned}
+  \end{gathered}
+\end{equation}
+
+\definecolor{zzttqq}{rgb}{0.6,0.2,0.}
+\definecolor{uuuuuu}{rgb}{0.26666666666666666,0.26666666666666666,0.26666666666666666}
+\definecolor{qqqqff}{rgb}{0.,0.,1.}
+\definecolor{cqcqcq}{rgb}{0.7529411764705882,0.7529411764705882,0.7529411764705882}
+\definecolor{red}{rgb}{0.8,0.0,0.0}
+\begin{center}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1.0cm,y=1.0cm]
+    \draw [color=cqcqcq,, xstep=1.0cm,ystep=1.0cm] (-1.,-1.) grid (11.,10.);
+    \draw[->,color=black] (-1.,0.) -- (11.,0.);
+    \foreach \x in {1,2,3,4,5,6,7,8,9,10}
+    \draw[shift={(\x,0)},color=black] (0pt,2pt) -- (0pt,-2pt) node[below] {\footnotesize $\x$};
+    \draw[->,color=black] (0.,-1.) -- (0.,10.);
+    \foreach \y in {1,2,3,4,5,6,7,8,9}
+    \draw[shift={(0,\y)},color=black] (2pt,0pt) -- (-2pt,0pt) node[left] {\footnotesize $\y$};
+    \draw[color=black] (0pt,-10pt) node[right] {\footnotesize $0$};
+    \clip(-1.,-1.) rectangle (11.,10.);
+    \fill[color=zzttqq,fill=zzttqq,fill opacity=0.10000000149011612] (2.,6.) -- (1.,9.) -- (10.,0.) -- (8.,0.) -- cycle;
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--8.-1.*\x)/1.});
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--12.-3.*\x)/1.});
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--10.-1.*\x)/1.});
+    \begin{scriptsize}
+      \draw [fill=uuuuuu] (2.,6.) circle (2.0pt);
+      \draw[color=uuuuuu] (2.14,6.33) node {$A$};
+      \draw [fill=uuuuuu] (1.,9.) circle (2.0pt);
+      \draw[color=uuuuuu] (1.14,9.33) node {$B$};
+      \draw [fill=uuuuuu] (8.,0.) circle (2.0pt);
+      \draw[color=uuuuuu] (8.14,0.33) node {$C$};
+      \draw [fill=uuuuuu] (10.,0.) circle (2.0pt);
+      \draw[color=uuuuuu] (10.14,0.33) node {$D$};
+    \end{scriptsize}
+  \end{tikzpicture}
+\end{center}
+
+Wir bringen das Problem erstmal in Normalform:
+\begin{equation*}
+  \begin{gathered}
+    \max \quad z = 2x_1 + x_2\\
+    \begin{aligned}
+      \textup{unter}
+      \quad
+      -x_1 - x_2  & \leq -8\\
+      -3x_1 - x_2 & \leq -12\\
+      x_1 + x_2   & \leq 10\\
+      x_1, x_2    & \geq 0
+    \end{aligned}
+  \end{gathered}
+\end{equation*}
+Weil einige der $b_i < 0$ sind, können wir nicht einfach $(0,0)$ als erste
+Basislösung nehmen. Wir müssen zunächst die erste Basislösung finden. Das ist
+die erste Phase der 2-Phasen-Methode. Dafür führen wir die Hilfsvariable $x_0$
+wie folgt ein:
+\begin{align*}
+  \begin{gathered}
+    \max \quad z' = -x_0\\
+    \begin{aligned}
+      \textup{unter}
+      \quad
+      -x_1 - x_2 - x_0  & \leq -8\\
+      -3x_1 - x_2 - x_0 & \leq -12\\
+      x_1 + x_2 - x_0   & \leq 10\\
+      x_0, x_1, x_2     & \geq 0
+    \end{aligned}
+  \end{gathered}
+\end{align*}
+Das ist das Hilfsproblem, das wir lösen müssen, um die erste Basislösung zu
+finden. Legen wir los mit den Schlupfvariablen $x_3, x_4, x_5$:
+\begin{align*}
+  \begin{array}{rcrcrcrcr}
+    x_3      & = & -8  & + & x_1   & + & x_2 & + & x_0\\
+    x_4      & = & -12 & + & 3 x_1 & + & x_2 & + & x_0\\
+    x_5      & = & 10  & - & x_1   & - & x_2 & + & x_0\\
+    \midrule
+    z'       & = &     &   &       &   &     & - & x_0
+  \end{array}
+\end{align*}
+Die Pivotspalte ist $x_0$. Für die Pivotzeile suchen wir die „unzulässigste“
+Zeile. Das ist die Zeile, bei der $b_i$ am kleinsten ist. Dies ist bei $x_4$ der
+Fall:
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_3      & = & -8  & + & x_1   & + & x_2 & + & x_0\\
+    x_4      & = & -12 & + & 3 x_1 & + & x_2 & + & x_0 & & \leftarrow\\
+    x_5      & = & 10  & - & x_1   & - & x_2 & + & x_0\\
+    \midrule
+    z'       & = &     &   &       &   &     & - & x_0
+  \end{array}
+\end{align*}
+Jetzt tauschen wir $x_4$ gegen $x_0$:
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_3      & = & 4  & - & 2 x_1 &   &     & + & x_4\\
+    x_0      & = & 12 & - & 3 x_1 & - & x_2 & + & x_4\\
+    x_5      & = & 10 & - & x_1   & - & x_2 & + & x_0\\
+    \midrule
+    z'       & = &    &   &       &   &     & - & x_0
+  \end{array}
+\end{align*}
+Und ersetzen $x_0$ in den anderen Gleichungen:
+\begin{align*}
+  \begin{array}{rcrcrcrcrcr}
+    x_3      & = & 4   & - & 2 x_1 &   &       & + & x_4\\
+    x_0      & = & 12  & - & 3 x_1 & - & x_2   & + & x_4\\
+    x_5      & = & 22  & - & 4 x_1 & - & 2 x_2 & + & x_4\\
+    \midrule
+    z'       & = & -12 & + & 3 x_1 & + & x_2   & - & x_4
+  \end{array}
+\end{align*}
+Ab jetzt wieder Pivotspalte und -zeile bestimmen. Größter Anstieg ist bei $x_1$,
+größte Einschränkung in den Zeilen ist bei:
+\begin{align*}
+  \begin{array}{rcrcrcrcrclr}
+    x_3      & = & 4   & - & 2 x_1 &   &       & + & x_4 & \quad & 4/2 = 2            & \leftarrow\\
+    x_0      & = & 12  & - & 3 x_1 & - & x_2   & + & x_4 &       & 12/3 = 4\\
+    x_5      & = & 22  & - & 4 x_1 & - & 2 x_2 & + & x_4 &       & 22/4 = \num{5,5}\\
+    \midrule
+    z'       & = & -12 & + & 3 x_1 & + & x_2   & - & x_4
+  \end{array}
+\end{align*}
+Also tauschen wir $x_1$ gegen $x_3$:
+\begin{align*}
+  \begin{array}{rcrcrcrcrclr}
+    x_1      & = & 2  &   &       & - & \frac{1}{2} x_3 & + & \frac{1}{2} x_4\\
+    x_0      & = & 6  & - & x_2   & + & \frac{3}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5      & = & 14 & - & 2 x_2 & + & 2 x_3           & - & x_4\\
+    \midrule
+    z'       & = & -6 & + & x_2   & - & \frac{3}{2} x_3 & + & \frac{1}{2 }x_4
+  \end{array}
+\end{align*}
+Und nochmal: Pivotspalte ist $x_2$, Pivotzeile ist $x_0$. Umtauschen ergibt
+\begin{align*}
+  \begin{array}{rcrcrcrcrclr}
+    x_1      & = & 2 &   &       & - & \frac{1}{2} x_3 & + & \frac{1}{2} x_4\\
+    x_2      & = & 6 & - & x_0   & + & \frac{3}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5      & = & 2 & + & 2 x_0 & - & x_3             &   & \\
+    \midrule
+    z'       & = &   & - & x_0   &   &                 &   &
+  \end{array}
+\end{align*}
+Jetzt haben wir das Hilfs-LP gelöst (Lemma 1.2). Nach diesem hat das Ausgangs-LP
+genau dann eine zulässige Lösung, wenn das Hilfs-LP eine optimale Lösung mit
+$x_0 = 0$ hat. Wir hätten auch keine weitere Iteration des Simplex-Algorithmus’
+mehr machen können, weil sich die Zielfunktion nicht weiter verbessern lässt.
+Die erste Basislösung ist jetzt $(x_0, x_1, x_2, x_3, x_4, x_5) = (0, 2, 6, 0,
+0, 2)$. Oder graphisch betrachtet bei Punkt $A$:
+\begin{center}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1.0cm,y=1.0cm]
+    \draw [color=cqcqcq,, xstep=1.0cm,ystep=1.0cm] (-1.,-1.) grid (11.,10.);
+    \draw[->,color=black] (-1.,0.) -- (11.,0.);
+    \foreach \x in {1,2,3,4,5,6,7,8,9,10}
+    \draw[shift={(\x,0)},color=black] (0pt,2pt) -- (0pt,-2pt) node[below] {\footnotesize $\x$};
+    \draw[->,color=black] (0.,-1.) -- (0.,10.);
+    \foreach \y in {1,2,3,4,5,6,7,8,9}
+    \draw[shift={(0,\y)},color=black] (2pt,0pt) -- (-2pt,0pt) node[left] {\footnotesize $\y$};
+    \draw[color=black] (0pt,-10pt) node[right] {\footnotesize $0$};
+    \clip(-1.,-1.) rectangle (11.,10.);
+    \fill[color=zzttqq,fill=zzttqq,fill opacity=0.10000000149011612] (2.,6.) -- (1.,9.) -- (10.,0.) -- (8.,0.) -- cycle;
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--8.-1.*\x)/1.});
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--12.-3.*\x)/1.});
+    \draw [color=qqqqff,domain=-1.:11.] plot(\x,{(--10.-1.*\x)/1.});
+    \begin{scriptsize}
+      \draw [fill=red] (2.,6.) circle (2.0pt);
+      \draw[color=red] (2.14,6.33) node {$A$};
+      \draw [fill=uuuuuu] (1.,9.) circle (2.0pt);
+      \draw[color=uuuuuu] (1.14,9.33) node {$B$};
+      \draw [fill=uuuuuu] (8.,0.) circle (2.0pt);
+      \draw[color=uuuuuu] (8.14,0.33) node {$C$};
+      \draw [fill=uuuuuu] (10.,0.) circle (2.0pt);
+      \draw[color=uuuuuu] (10.14,0.33) node {$D$};
+    \end{scriptsize}
+  \end{tikzpicture}
+\end{center}
+Um das Ausgangs-LP zu lösen, müssen wir jetzt nur $x_0$ aus dem Hilfs-LP
+streichen (schließlich ist $x_0 = 0$) und können ganz normal mit dem
+Simplex-Algorithmus weitermachen. Unsere ursprüngliche Zielfunktion war $z = 2
+x_1 + x_2$. Dort müssen wir $x_1$ und $x_2$ ersetzen und erhalten:
+\begin{align*}
+  \begin{array}{rcrcrcrcrclr}
+    x_1      & = & 2  & - & \frac{1}{2} x_3 & + & \frac{1}{2} x_4\\
+    x_2      & = & 6  & + & \frac{3}{2} x_3 & - & \frac{1}{2} x_4\\
+    x_5      & = & 2  & - & x_3             &   & \\
+    \midrule
+    z        & = & 10 & + & \frac{1}{2} x_3 & + & \frac{1}{2} x_4
+  \end{array}
+\end{align*}
+Wenn man das weiterrechnet, dann erhält man die optimale Lösung $(x_1, x_2, x_3,
+x_4, x_5) = (10, 0, 0, 18, 2)$.
+
+\begin{equation}
+  \begin{gathered}
+    \max \quad x_1 + x_2\\
+    \begin{aligned}
+      \textup{unter}
+      \quad
+      x_1 + 2x_2 + x_3   & = 1\\
+      x_1 - 2x_2 - x_4   & = 2\\
+      x_1, x_2, x_3, x_4 & \geq 0
+    \end{aligned}
+  \end{gathered}
+\end{equation}
+
+\paragraph{Aufgabe 4}%
+\label{par:aufgabe_4}
+
+Ein Landwirt beabsichtigt seinen \SI{10000}{m^2} großen Acker teils mit Blumen
+und teils mit Gemüse zu bestellen. Er erwartet pro Quadratmeter Blumen einen
+Deckungsbeitrag von \num{2,5} GE zu erzielen, pro Quadratmeter Gemüse \num{1}
+GE\@. Mit \num{0,1} GE Pflegekosten pro Quadratmeter Brache muss er rechnen. Die
+Beschaffung des Saatguts erfordert Mittel in Höhe von \num{1} GE pro zu
+bepflanzendem Quadratmeter Blumen und \num{0,5} GE pro Quadratmeter Gemüse,
+wofür insgesamt maximal \num{8000} GE verwendet werden sollen (inklusive
+Pflegekosten für evtl. Brachfläche).
+
+Wie viel Acker soll mit Blumen und wie viel mit Gemüse bepflanzt werden, und wie
+viel soll brach liegen, um ein optimales Ergebnis zu erreichen?
+
+Ist es besser für den Landwirt, wenn er die Gesamtfläche bestellt?
+
+Sie können eine frei erhältliche Software zur Lösung linearer Programme
+benutzen. Beispielsweise \texttt{lpsolve}.
+
+\paragraph{Aufgabe 11}%
+\label{par:aufgabe_11}
+
+Leiten Sie das duale LP zu dem LP des klassischen Transportproblems her:
+
+\begin{tabular}{lll}
+  $\min$ & $\sum\limits_{i=1}^m \sum\limits_{j=1}^n c_{ij} x_{ij}$\\
+  unter & $\sum\limits_{j=1}^n x_{ij} = a_i$ & $(i = 1,2, \ldots, m)$\\
+  & $\sum\limits_{i=1}^m x_{ij} = b_j$ & $(j = 1,2, \ldots, n)$\\
+  & $x_{ij} \geq 0$ & $(i \leq i \leq m, 1 \leq j \leq n)$
+\end{tabular}
+
+\paragraph{Aufgabe 12}%
+\label{par:aufgabe_12}
+\begin{wrapfigure}{r}{0.2\textwidth}
+  $(c_{ij})  =
+  \begin{pmatrix}
+    5 & 4 & 6\\
+    3 & 4 & 2\\
+    4 & 3 & 5\\
+    4 & 3 & 4
+  \end{pmatrix}$
+\end{wrapfigure}
+Die vier Fertigungsbetriebe $A_1, A_2, A_3, A_4$ eines Unternehmens produzieren
+an verschiedenen Orten die gleiche Ware. In jedem Monat werden (in
+Mengeneinheiten, ME):
+\begin{addmargin}[1cm]{0cm}
+  $6$ ME im Betrieb $A_1$, $7$ ME in $A_2$, $8$ ME in $A_3$, $6$ ME in $A_4$
+\end{addmargin}
+Die Gesamtproduktion soll zu drei verschiedenen Lagerhäusern $B_1, B_2, B_3$
+transportiert werden, so dass dort der jeweilige vorhandene Bedarf gedeckt
+werden kann:
+\begin{addmargin}[1cm]{0cm}
+  $B_1$ fragt $10$ ME nach, $B_2$ $8$ ME, $B_3$ $9$ ME.
+\end{addmargin}
+Die Transportkosten $c_{ij}$ pro Mengeneinheit der Ware von $A_i$ nach $B_j$
+sind in der unten stehenden Matrix angegeben.
+
+\begin{enumerate}[(a)]
+  \item Bestimmen Sie einen zulässigen Transportplan mit der Nordwesteckenregel.
+    Geben Sie die Transportkosten an.
+
+  \item Bestimmen Sie einen zulässigen, möglichst nicht entarteten,
+    Transportplan mit der Minimale-Kosten-Regel.
+    Geben Sie die Transportkosten an.
+
+    \begin{enumerate}[1.]
+      \item $c_{23} = 2$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 &     &     &     & 6\\
+            A_2 &     &     & 7   & 0\\
+            A_3 &     &     &     & 8\\
+            A_4 &     &     &     & 6\\
+                & 10  & 8   & 2
+          \end{matrix}
+        \end{align*}
+
+      \item $c_{42} = 3$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 &     &     &     & 6\\
+            A_2 &     &     & 7   & 0\\
+            A_3 &     &     &     & 8\\
+            A_4 &     & 6   &     & 0\\
+                & 10  & 2   & 2
+          \end{matrix}
+        \end{align*}
+
+      \item $c_{32} = 3$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 &     &     &     & 6\\
+            A_2 &     &     & 7   & 0\\
+            A_3 &     & 2   &     & 6\\
+            A_4 &     & 6   &     & 0\\
+                & 10  & 0   & 2
+          \end{matrix}
+        \end{align*}
+
+      \item $c_{31} = 4$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 &     &     &     & 6\\
+            A_2 &     &     & 7   & 0\\
+            A_3 & 6   & 2   &     & 0\\
+            A_4 &     & 6   &     & 0\\
+                & 4   & 0   & 2
+          \end{matrix}
+        \end{align*}
+
+      \item $c_{11} = 5$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 & 4   &     &     & 2\\
+            A_2 &     &     & 7   & 0\\
+            A_3 & 6   & 2   &     & 0\\
+            A_4 &     & 6   &     & 0\\
+                & 0   & 0   & 2
+          \end{matrix}
+        \end{align*}
+
+      \item $c_{13} = 6$
+        \begin{align*}
+          \begin{matrix}
+                & B_1 & B_2 & B_3 & \\
+            A_1 & 4   &     & 2   & 0\\
+            A_2 &     &     & 7   & 0\\
+            A_3 & 6   & 2   &     & 0\\
+            A_4 &     & 6   &     & 0\\
+                & 0   & 0   & 0
+          \end{matrix}
+        \end{align*}
+        Kosten: 94.
+    \end{enumerate}
+
+  \item Bestimmen Sie einen kostenminimalen Transportplan mit der
+    $u$-$v$-Methode sowie die zugehörigen Kosten. Verwenden Sie dabei die in (a)
+    \underline{oder} (b) gefundene Ausgangslösung.
+
+    Die Basislösung der Nordwesteckenregel lautet
+    \begin{align*}
+      \begin{matrix}
+            & B_1 & B_2 & B_3\\
+        A_1 & 6\\
+        A_2 & 4   & 3\\
+        A_3 &     & 5   & 3\\
+        A_4 &     &     & 6
+      \end{matrix}
+    \end{align*}
+    Das hat die folgenden Basisvariablen:
+    \begin{align*}
+      B & = \left\{ (1,1), (2,1), (2,2), (3,2), (3,3), (4,3) \right\}
+    \end{align*}
+    Diese führen zu folgenden Gleichungen $(u_i + v_j = c_{ij})$:
+    \begin{align*}
+      u_1 + v_1 & = 5 & u_3 + v_2 & = 3\\
+      u_2 + v_1 & = 3 & u_3 + v_3 & = 5\\
+      u_2 + v_2 & = 4 & u_4 + v_3 & = 4
+    \end{align*}
+    Wir können eine Variable frei wählen, also setzen wir $u_2 = 0$, woraus
+    folgt: $v_1 = 3, v_2 = 4, u_1 = 2, u_3 = -1, v_3 = 6, u_4 = -2$.
+
+    Jetzt prüfen wir die duale Zulässigkeit $\overline{c_{ij}} = c_{ij} - u_i -
+    v_j \geq 0$:
+    \begin{align*}
+      \overline{c_{12}} & = 4 - 2 - 4 = -2 \quad \falsch\\
+      \overline{c_{13}} & = 6 - 2 - 6 = -2 \quad \falsch\\
+      \overline{c_{23}} & = 2 - 0 - 6 = -4 \quad \falsch\\
+      \overline{c_{31}} & = 4 - (-1) - 3 = 2 \quad \richtig\\
+      \overline{c_{41}} & = 4 - (-2) - 3 = 3 \quad \richtig\\
+      \overline{c_{42}} & = 3 - (-2) - 4 = 1 \quad \richtig
+    \end{align*}
+    Das Minimum dieser $\overline{c_{ij}}$ ist $\overline{c_{23}}$, also wird
+    $(2,3)$ in die Basis aufgenommen. Aber welche Position verlässt die Basis?
+    Schauen wir uns den Graph an:
+    \begin{center}
+      \begin{tikzpicture}
+        \node (a4) at (0,0) [shape=circle, draw] {$A_4$};
+        \node (a3) at (0,2) [shape=circle, draw] {$A_3$};
+        \node (a2) at (0,4) [shape=circle, draw] {$A_2$};
+        \node (a1) at (0,6) [shape=circle, draw] {$A_1$};
+        \node (b3) at (5,1) [shape=circle, draw] {$B_3$};
+        \node (b2) at (5,3) [shape=circle, draw] {$B_2$};
+        \node (b1) at (5,5) [shape=circle, draw] {$B_1$};
+
+        \draw (a1) -- (b1) -- (a2) -- (b2) -- (a3) -- (b3) -- (a4);
+        \draw [red] (a2) -- (b3);
+      \end{tikzpicture}
+    \end{center}
+    Die rote Linie von $A_2$ nach $B_3$ zeigt die neue Basisvariable. Mit dieser
+    neuen Kante finden wir den Kreis: $A_2 - B_2 - A_3 - B_3 - A_2$.
+    \begin{align*}
+      \begin{matrix}
+        & B_1 & B_2  & B_3\\
+        A_1 & 6\\
+        A_2 & 4
+        & ^- 3 \ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n1) {};
+        & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n2) {}; \ \phantom{3}^+\\
+        A_3 &
+        & ^+ 5 \ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n4) {};
+        & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n3) {}; \ 3^-\\
+        A_4 &     &      & 6
+      \end{matrix}
+      &
+      \begin{tikzpicture}[remember picture, overlay]
+        \draw [blue!50] (n1.center)
+          -- (n2.center)
+          -- (n3.center)
+          -- (n4.center)
+          -- (n1.center);
+      \end{tikzpicture}
+    \end{align*}
+    Von den mit $(-)$ markierten Einträgen nehmen wir jetzt das Minimum (in
+    diesem Fall: $3$) und ziehen es von den $(-)$ markierten Einträgen ab und
+    addieren es auf die mit $(+)$ markierten Einträge auf.
+
+    Das führt zu folgendem Transportplan:
+    \begin{align*}
+      \begin{matrix}
+            & B_1 & B_2 & B_3\\
+        A_1 & 6\\
+        A_2 & 4   & 0   & 3\\
+        A_3 &     & 8   & 0\\
+        A_4 &     &     & 6
+      \end{matrix}
+    \end{align*}
+    Von den beiden Nullen darf aber nur eine bleiben, da eine der Basisvariablen
+    entfernt werden und eine andere behalten werden muss. Welche bleibt und
+    welche entfernt wird, ist egal. Wir wählen $x_{22}$ als bleibende, also wird
+    $x_{33}$ entfernt und wir erhalten folgenden Transportplan:
+    \begin{align*}
+      \begin{matrix}
+            & B_1 & B_2 & B_3\\
+        A_1 & 6\\
+        A_2 & 4   & 0   & 3\\
+        A_3 &     & 8\\
+        A_4 &     &     & 6
+      \end{matrix}
+    \end{align*}
+    Hier wird wieder optimiert. Wir nehmen die Basisvariablen her:
+    \begin{align*}
+      B & = \left\{ (1,1), (2,1), (2,2), (2,3), (3,2), (4,3) \right\}
+    \end{align*}
+    Diese führen zu den $u,v$-Gleichungen:
+    \begin{align*}
+      u_1 + v_1 & = 5 & u_2 + v_3 & = 2\\
+      u_2 + v_1 & = 3 & u_3 + v_2 & = 3\\
+      u_2 + v_2 & = 4 & u_4 + v_3 & = 4
+    \end{align*}
+    Wir wählen $u_2 = 0$ und erhalten: $v_1 = 3, v_2 = 4, v_3 = 2, u_1 = 2, u_3
+    = -1, u_4 = 2$. Dann prüfen wir wieder die duale Zulässigkeit:
+    \begin{align*}
+      \overline{c_{12}} & = 4 - 2 - 4    = -2 \quad \falsch\\
+      \overline{c_{13}} & = 6 - 2 - 2    = 2 \quad \richtig\\
+      \overline{c_{31}} & = 4 - (-1) - 3 = 2 \quad \richtig\\
+      \overline{c_{33}} & = 5 - (-1) - 2 = 4 \quad \richtig\\
+      \overline{c_{41}} & = 4 - 2 - 3    = -1 \quad \falsch\\
+      \overline{c_{42}} & = 3 - 2 - 4    = -3 \quad \falsch
+    \end{align*}
+    Das Minimum ist hier $\overline{c_{42}} = -3$, also wird $(4,2)$ in die
+    Basis aufgenommen. Wir suchen wieder einen Kreis im Transportplan:
+    \begin{center}
+      \begin{tikzpicture}
+        \node (a4) at (0,0) [shape=circle, draw] {$A_4$};
+        \node (a3) at (0,2) [shape=circle, draw] {$A_3$};
+        \node (a2) at (0,4) [shape=circle, draw] {$A_2$};
+        \node (a1) at (0,6) [shape=circle, draw] {$A_1$};
+        \node (b3) at (5,1) [shape=circle, draw] {$B_3$};
+        \node (b2) at (5,3) [shape=circle, draw] {$B_2$};
+        \node (b1) at (5,5) [shape=circle, draw] {$B_1$};
+
+        \draw (a1) -- (b1) -- (a2);
+        \draw (b2) -- (a2) -- (b3);
+        \draw (a3) -- (b2);
+        \draw (a4) -- (b3);
+        \draw [red] (a4) -- (b2);
+      \end{tikzpicture}
+    \end{center}
+    Wir finden den Kreis $A_2 - B_2 - A_4 - B_3 - A_2$ und stellen diesen im
+    Transportplan dar:
+    \begin{align*}
+      \begin{matrix}
+            & B_1 & B_2 & B_3\\
+        A_1 & 6\\
+        A_2 & 4
+            & {}^- 0 \ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n1) {};
+            & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n2) {}; \ 3^+\\
+        A_3 &     & 8   & \\
+        A_4 &
+            & {}^+\phantom{0}\ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n4) {};
+            & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n3) {}; \ 6^-
+      \end{matrix}
+      &
+      \begin{tikzpicture}[remember picture, overlay]
+        \draw [blue!50] (n1.center)
+          -- (n2.center)
+          -- (n3.center)
+          -- (n4.center)
+          -- (n1.center);
+      \end{tikzpicture}
+    \end{align*}
+    Das Minimum der mit $(-)$ markierten Zellen ist $0$. Was ändert sich also?
+    Eigentlich nichts, nur dass die Basisvariablen wechseln: $(2,2)$ geht raus,
+    $(4,2)$ geht rein. Wir erhalten folgenden Transportplan:
+    \begin{align*}
+      \begin{matrix}
+             & B_1 & B_2 & B_3\\
+        A_1  & 6\\
+        A_2  & 4   &     & 3\\
+        A_3  &     & 8   & \\
+        A_4  &     & 0   & 6
+      \end{matrix}
+    \end{align*}
+    Jetzt wieder die Gleichungen aufstellen und die duale Zulässigkeit prüfen
+    (spare ich mir hier). Das Minimum der Unzulässigkeiten findet sich bei
+    $\overline{c_{41}}$, was zu folgendem Graphen führt:
+    \begin{center}
+      \begin{tikzpicture}
+        \node (a4) at (0,0) [shape=circle, draw] {$A_4$};
+        \node (a3) at (0,2) [shape=circle, draw] {$A_3$};
+        \node (a2) at (0,4) [shape=circle, draw] {$A_2$};
+        \node (a1) at (0,6) [shape=circle, draw] {$A_1$};
+        \node (b3) at (5,1) [shape=circle, draw] {$B_3$};
+        \node (b2) at (5,3) [shape=circle, draw] {$B_2$};
+        \node (b1) at (5,5) [shape=circle, draw] {$B_1$};
+
+        \draw (a1) -- (b1) -- (a2);
+        \draw (a2) -- (b3);
+        \draw (a3) -- (b2);
+        \draw (a4) -- (b3);
+        \draw (a4) -- (b2);
+        \draw [red] (a4) -- (b1);
+      \end{tikzpicture}
+    \end{center}
+    Im Transportplan finden wir folgenden Kreis:
+    \begin{align*}
+      \begin{matrix}
+            & B_1 & B_2 & B_3\\
+        A_1 & 6\\
+        A_2 & {}^-4 \ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n1) {};
+            &
+            & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n2) {}; \ 3^+\\
+        A_3 &     & 8   & \\
+        A_4 & {}^+\phantom{0}\ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n4) {};
+            & 0
+            & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n3) {}; \ 6^-
+      \end{matrix}
+      &
+      \begin{tikzpicture}[remember picture, overlay]
+        \draw [blue!50] (n1.center)
+          -- (n2.center)
+          -- (n3.center)
+          -- (n4.center)
+          -- (n1.center);
+      \end{tikzpicture}
+    \end{align*}
+    Jetzt ändert sich auch was am Transportplan! $\delta = 4$ wird von den mit
+    $(-)$ markierten Zellen subtrahiert und auf die mit $(+)$ markierten Zellen
+    addiert. Das ergibt:
+    \begin{align*}
+      \begin{matrix}
+             & B_1 & B_2 & B_3\\
+        A_1  & 6\\
+        A_2  &     &     & 7\\
+        A_3  &     & 8   & \\
+        A_4  & 4   & 0   & 2
+      \end{matrix}
+    \end{align*}
+    Stellt man wieder die $u,v$-Gleichungen auf und überprüft die duale
+    Zulässigkeit, dann stellt man fest, dass dieser Plan mit den Kosten $92$
+    optimal ist:
+    \begin{align*}
+      B & = \left\{ (1,1), (2,3), (3,2), (4,1), (4,2), (4,3) \right\}
+    \end{align*}
+    Diese führen zu den $u,v$-Gleichungen:
+    \begin{align*}
+      u_1 + v_1 & = 5 & u_4 + v_1 & = 4\\
+      u_2 + v_3 & = 2 & u_4 + v_2 & = 3\\
+      u_3 + v_2 & = 3 & u_4 + v_3 & = 4
+    \end{align*}
+    Wir wählen $u_1 = 0$ und erhalten:
+    $u_2 = -3, u_3 = -1, u_4 = -1, v_1 = 5, v_2 = 4, v_3 = 5$.
+    \begin{align*}
+      \overline{c_{12}} & = 4 - 0 - 4 = 0 \quad \richtig\\
+      \overline{c_{13}} & = 6 - 0 - 5 = 1 \quad \richtig\\
+      \overline{c_{21}} & = 3 - (-3) - 5 = 1 \quad \richtig\\
+      \overline{c_{22}} & = 4 - (-3) - 4 = 3 \quad \richtig\\
+      \overline{c_{31}} & = 4 - (-1) - 5 = 0 \quad \richtig\\
+      \overline{c_{33}} & = 5 - (-1) - 5 = 1 \quad \richtig
+    \end{align*}
+
+    Wenn man die Basislösung der MK-Methode nimmt, dann kommt man auf folgende
+    Menge von Basisvariablen:
+    \begin{align*}
+      B = \{(1,1), (1,3), (2,3), (3,1), (3,2), (4,2)\}
+    \end{align*}
+    Aus diesen ergeben sich die folgenden $u,v$-Gleichungen:
+    \begin{align*}
+      u_1 + v_1 & = 5 & u_3 + v_1 & = 4\\
+      u_1 + v_3 & = 6 & u_3 + v_2 & = 3\\
+      u_2 + v_3 & = 2 & u_4 + v_2 & = 3
+    \end{align*}
+    Aus $u_1 = 0$ folgt:
+    $v_1 = 5, v_3 = 6, u_2 = -4, u_3 = -1, v_2 = 4, u_4 = -1$.
+    Duale Zulässigkeit prüfen:
+    \begin{align*}
+      \overline{c_{12}} & = 4 - 0 - 4 = 0 \quad \richtig\\
+      \overline{c_{21}} & = 3 - (-4) - 5 = 2 \quad \richtig\\
+      \overline{c_{22}} & = 4 - (-4) - 4 = 4 \quad \richtig\\
+      \overline{c_{33}} & = 5 - (-1) - 6 = 0 \quad \richtig\\
+      \overline{c_{41}} & = 4 - (-1) - 5 = 0 \quad \richtig\\
+      \overline{c_{43}} & = 4 - (-1) - 6 = -1 \quad \falsch
+    \end{align*}
+
+    \begin{minipage}[t]{0.2\textwidth}
+      vorher:
+      \begin{align*}
+        \begin{matrix}
+               & B_1 & B_2 & B_3\\
+          A_1
+          & 4^+ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n1) {};
+          &
+          & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n2) {};\ 2^-\\
+          A_2  &     &     & \ 7\\
+          A_3
+          & 6^- \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n3) {};
+          & 2^+ \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n4) {};
+          & \\
+          A_4
+          &
+          & 6^- \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n5) {};
+          & \tikz[remember picture] \draw [blue!50, fill=blue!50] circle (1pt) node (n6) {}; \ \phantom{0}^+
+        \end{matrix}
+        &
+        \begin{tikzpicture}[remember picture, overlay]
+          \draw [blue!50] (n1.center)
+          -- (n2.center)
+          -- (n6.center)
+          -- (n5.center)
+          -- (n4.center)
+          -- (n3.center)
+          -- (n1.center);
+        \end{tikzpicture}
+      \end{align*}
+      $\delta = 2$
+    \end{minipage}
+    \begin{minipage}[t]{0.4\textwidth}
+      Graph des Transportplans:
+      \begin{center}
+        \begin{tikzpicture}
+          \node (a4) at (0,0) [shape=circle, draw] {$A_4$};
+          \node (a3) at (0,2) [shape=circle, draw] {$A_3$};
+          \node (a2) at (0,4) [shape=circle, draw] {$A_2$};
+          \node (a1) at (0,6) [shape=circle, draw] {$A_1$};
+          \node (b3) at (5,1) [shape=circle, draw] {$B_3$};
+          \node (b2) at (5,3) [shape=circle, draw] {$B_2$};
+          \node (b1) at (5,5) [shape=circle, draw] {$B_1$};
+
+          \draw (a1) -- (b1);
+          \draw (a1) -- (b3);
+          \draw (a2) -- (b3);
+          \draw (a3) -- (b1);
+          \draw (a3) -- (b2);
+          \draw (a4) -- (b2);
+          \draw [red] (a4) -- (b3);
+        \end{tikzpicture}
+      \end{center}
+    \end{minipage}
+    \begin{minipage}[t]{0.2\textwidth}
+      nachher:
+      \begin{align*}
+        \begin{matrix}
+              & B_1 & B_2 & B_3\\
+          A_1 & 6   &     & \\
+          A_2 &     &     & 7\\
+          A_3 & 4   & 4   & \\
+          A_4 &     & 4   & 2
+        \end{matrix}
+      \end{align*}
+      Kosten: 92. Nach weiterer Prüfung der dualen Zulässigkeit ergibt sich die
+      Optimalität.
+    \end{minipage}
+\end{enumerate}
+
+\paragraph{Aufgabe 13}%
+\label{par:aufgabe_13}
+
+Ein Unternehmen hat für die Besetzung von vier Stellen $A_1, \ldots, A_4$ fünf
+Bewerber $B_1, \ldots, B_5$ zur Verfügung, die für einzelne Stellen
+unterschiedlich geeignet sind. Die Eignungspunkte (von $1 = $ nicht sehr
+geeignet bis $10 =$ am besten geeignet) der Bewerber wurden wie folgt
+festgestellt:
+\begin{center}
+  \begin{tabular}{c|ccccc}
+           & $B_1$ & $B_2$ & $B_3$ & $B_4$ & $B_5$\\\hline
+    $A_1$  & $5$   & $6$   & $8$   & $6$   & $4$\\
+    $A_2$  & $7$   & $5$   & $10$  & $7$   & $3$\\
+    $A_3$  & $4$   & $6$   & $5$   & $3$   & $6$\\
+    $A_4$  & $4$   & $4$   & $5$   & $3$   & $5$\\
+  \end{tabular}
+\end{center}
+
+\paragraph{Aufgabe 14}%
+\label{par:aufgabe_14}
+
+Eine Firma in Rostock will einer Firma in Bangkok einen Geldbetrag überweisen.
+Für die Übermittlung des Geldes stehen verschiedene Wege zur Verfügung. Leider
+vermindert sich die Summe auf jedem Teilstück des Übertragungsweges um einen
+gewissen Prozentsatz (Bearbeitungsprovision) des jeweils verbliebenen Betrages.
+
+Für die Abwicklung der Überweisung soll ein Weg gewählt werden, auf dem beim
+Empfänger ein möglichst hoher Anteil der ursprünglich angewiesenen Summe
+ankommt.
+
+\begin{center}
+  \begin{tikzpicture}[auto]
+    \node [shape=rectangle, draw] (rostock) at (0,0) {Rostock};
+
+    \node [shape=circle, draw] (a) at (3,2) {$a$};
+    \node [shape=circle, draw] (b) at (3,0) {$b$};
+    \node [shape=circle, draw] (c) at (3,-2) {$c$};
+
+    \node [shape=circle, draw] (d) at (6,2) {$d$};
+    \node [shape=circle, draw] (e) at (6,0) {$e$};
+    \node [shape=circle, draw] (f) at (6,-2) {$f$};
+
+    \node [shape=rectangle, draw] (bangkok) at (9,0) {Bangkok};
+
+    \draw [-latex] (rostock) to [bend left] node {\SI{3}{\percent}} (a);
+    \draw [-latex] (rostock) to node {\SI{8}{\percent}} (b);
+    \draw [-latex] (rostock) to [bend right] node {\SI{1}{\percent}} (c);
+    \draw [-latex] (a) to node [very near start, sloped] {\SI{3}{\percent}} (e);
+    \draw [-latex] (b) to node [pos=0.3, sloped] {\SI{6}{\percent}} (d);
+    \draw [-latex] (b) to node [very near start, sloped] {\SI{4}{\percent}} (f);
+    \draw [-latex] (c) to node [near start, sloped] {\SI{5}{\percent}} (e);
+    \draw [-latex] (d) to node {\SI{2}{\percent}} (bangkok);
+    \draw [-latex] (e) to node [near start, above] {\SI{2}{\percent}} (b);
+    \draw [-latex] (e) to node {\SI{10}{\percent}} (bangkok);
+    \draw [-latex] (f) to node {\SI{4}{\percent}} (bangkok);
+  \end{tikzpicture}
+\end{center}
+
+Formen Sie die Kantenbewertungen so um, dass durch die Aufgabenstellung ein
+Kürzeste-Wege-Problem gelöst wird und lösen Sie das Überweisungsproblem im
+obigen Bild mithilfe des Dijkstra-Algorithmus. Dabei sollen die auftretenden
+Zahlen auf 3 Nachkommastellen kaufmännisch gerundet werden.
+
+Zunächst müssen wir die Kantengewichte umformen. Dabei müssen wir folgendes
+beachten: wenn wir den Betrag $x$ von Rostock nach $a$ überweisen und dabei
+\SI{3}{\percent} Provision zahlen müssen, dann bleiben nach der Überweisung noch
+\SI{97}{\percent} von $x$ übrig, also $\num{0,97} x$. Wenn dieser Betrag nach
+$e$ überwiesen wird, dann werden von $\num{0,97} x$ die \SI{3}{\percent}
+Provision abgezogen, sodass bei $e$ noch $\num{0,97} \cdot \num{0,97} x =
+\num{0,941} x$ übrig bleiben (wie angegeben gerundet). Absolut gesehen werden
+von Rostock über $a$ zu $e$ \quad $1-\num{0,941} = \SI{5,9}{\percent}$
+abgezogen. Von $a$ zu $e$ werden dabei absolut $\SI{5,9}{\percent} -
+\SI{3}{\percent} = \SI{2,9}{\percent}$ abgezogen. Dabei bedeutet
+\textit{absolut}: absolut vom Betrag $x$. Wenn wir die Kantengewichte so
+umrechnen, dann lassen sich die Prozente entlang eines Pfades addieren und wir
+können mit dem Dijkstra-Algorithmus den kürzesten Pfad finden, auf dem die Summe
+der Kantengewichte minimal ist.
+
+Allgemein betrachtet ergibt sich folgendes: jede Kante vom Startknoten (Rostock)
+ändert sich nicht. Entlang eines Pfades mit den Gewichten $p_1, p_2, \ldots,
+p_n$ ergibt sich das Gewicht der letzten Kante aus
+$(1-p_1) \cdot (1-p_2) \cdots (1-p_{n-1})
+- (1-p_1) \cdot (1-p_2) \cdots (1-p_n)$.
+
+Überprüfen wir das kurz: für die Kanten von Rostock nach $a, b$ und $c$ ändert
+sich nichts. Für die Kante $ae$ ergibt sich ein Gewicht von
+\begin{align*}
+  (1-\num{0,03}) - (1-\num{0,03}) \cdot (1-\num{0,03})
+  = \num{0,97} - \num{0,941}
+  = \num{0,029}
+\end{align*}
+Soweit, so gut. Schauen wir uns $ce$ an:
+\begin{align*}
+  (1-\num{0,01}) - (1-\num{0,01}) \cdot (1-\num{0,05})
+  = \num{0,99} - \num{0,941}
+  = \num{0,049}
+\end{align*}
+An dem Zwischenergebnis $\num{0,99} - \num{0,941}$ sehen wir, dass wir richtig
+liegen. Bei $c$ waren noch \SI{99}{\percent} übrig und bei $e$ sind noch
+$\SI{99}{\percent} \cdot \SI{95}{\percent} = \SI{94,1}{\percent}$ übrig. Die
+Differenz gibt an, wie viel auf der Kante abgezogen wurde.
+
+Daraus entsteht folgender Graph:
+\begin{center}
+  \begin{tikzpicture}[auto]
+    \node [shape=rectangle, draw] (rostock) at (0,0) {Rostock};
+
+    \node [shape=circle, draw] (a) at (3,2) {$a$};
+    \node [shape=circle, draw] (b) at (3,0) {$b$};
+    \node [shape=circle, draw] (c) at (3,-2) {$c$};
+
+    \node [shape=circle, draw] (d) at (6,2) {$d$};
+    \node [shape=circle, draw] (e) at (6,0) {$e$};
+    \node [shape=circle, draw] (f) at (6,-2) {$f$};
+
+    \node [shape=rectangle, draw] (bangkok) at (9,0) {Bangkok};
+
+    \draw [-latex] (rostock) to [bend left] node {\SI{3}{\percent}} (a);
+    \draw [-latex] (rostock) to node {\SI{8}{\percent}} (b);
+    \draw [-latex] (rostock) to [bend right] node {\SI{1}{\percent}} (c);
+    \draw [-latex] (a) to node [very near start, sloped] {\SI{2,9}{\percent}} (e);
+    \draw [-latex] (b) to node [pos=0.4, sloped] {\SI{5,5}{\percent}} (d);
+    \draw [-latex] (b) to node [very near start, sloped] {\SI{3,7}{\percent}} (f);
+    \draw [-latex] (c) to node [pos=0.4, sloped] {\SI{4,9}{\percent}} (e);
+    \draw [-latex] (d) to node [sloped] {\SI{1,7}{\percent}} (bangkok);
+    \draw [-latex] (e) to node [pos=0.4, above] {\SI{1,9}{\percent}} (b);
+    \draw [-latex] (e) to node {\SI{9,4}{\percent}} (bangkok);
+    \draw [-latex] (f) to node [sloped] {\SI{3,5}{\percent}} (bangkok);
+  \end{tikzpicture}
+\end{center}
+Darauf können wir jetzt den Dijkstra-Algorithmus anwenden. Wir initialisieren
+zunächst das Distanzarray $\dist$ und das Vorgängerarray $\vor$:
+\begin{align*}
+  \begin{array}{lcccccccc}
+    v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+    \midrule
+    \dist[v]:
+      & 0 & \infty & \infty & \infty & \infty & \infty & \infty & \infty\\
+    \vor[v]:
+      & \nil
+  \end{array}
+\end{align*}
+Weiterhin ist $Q = V = \{ \text{Rostock}, a, b, c, d, e, f, \text{Bangkok}\}$.
+Wir zählen die Iterationen der äußeren „while $Q \neq \emptyset$ do“ Schleife
+auf:
+\begin{enumerate}
+  \item Der Knoten $u \in Q$ mit kleinstem $\dist[u]$ ist Rostock (schließlich
+    ist $\dist$ für alle anderen $\infty$).
+
+    $Q$ wird zu $Q \setminus \{ u \} = \{ a, b, c, d, e, f, \text{Bangkok}\}$.
+
+    Die Menge $N^+(u) \cup Q$ ist $\{ a, b, c \}$.
+    Wir iterieren über alle Elemente daraus:
+    \begin{description}
+      \item[$v := a$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[\text{Rostock}] + \ell(\text{Rostock}, a) & < d[a]\\
+          0 + 3 & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[a] & := \dist[\text{Rostock}] + \ell(\text{Rostock}, a)
+            = 0 + 3 = 3\\
+          \vor[a] & := \text{Rostock}
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \infty & \infty & \infty & \infty & \infty & \infty\\
+            \vor[v]:
+              & \nil & \text{Rostock}
+          \end{array}
+        \end{align*}
+
+      \item[$v := b$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[\text{Rostock}] + \ell(\text{Rostock}, b) & < d[b]\\
+          0 + 8 & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[b] & := \dist[\text{Rostock}] + \ell(\text{Rostock}, b)
+            = 0 + 8 = 8\\
+          \vor[b] & := \text{Rostock}
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & 8 & \infty & \infty & \infty & \infty & \infty\\
+            \vor[v]:
+              & \nil & \text{Rostock} & \text{Rostock}
+          \end{array}
+        \end{align*}
+
+      \item[$v := c$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[\text{Rostock}] + \ell(\text{Rostock}, c) & < d[c]\\
+          0 + 1 & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[c] & := \dist[\text{Rostock}] + \ell(\text{Rostock}, c)
+            = 0 + 1 = 1\\
+          \vor[c] & := \text{Rostock}
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & 8 & 1 & \infty & \infty & \infty & \infty\\
+            \vor[v]:
+              & \nil & \text{Rostock} & \text{Rostock} & \text{Rostock}
+          \end{array}
+        \end{align*}
+    \end{description}
+
+  \item Damit ist die erste Iteration durch und wir starten gleich in die
+    nächste.  Wir suchen wieder den Knoten $u \in Q$ mit dem kleinesten
+    $\dist[u]$. Das ist $c$ mit $\dist[c] = 1$. Wir entfernen $c$ aus $Q$:
+    \begin{align*}
+      Q & := Q \setminus \{ c \} = \{ a, b, d, e, f, \text{Bangkok}\}
+    \end{align*}
+    Und iterieren über alle Nachbarn von $c$, die zudem noch in $Q$ sind. Diese
+    Menge $N^+(u) \cup Q$ ist nur $\{ e \}$:
+    \begin{description}
+      \item[$v := e$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[c] + \ell(c, e) & < d[e]\\
+          1 + \num{4,9} & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[e] & := \dist[c] + \ell(c, e)
+            = 1 + \num{4,9} = \num{5,9}\\
+          \vor[e] & := c
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & 8 & 1 & \infty & \num{5,9} & \infty & \infty\\
+            \vor[v]:
+              & \nil & \text{Rostock} & \text{Rostock} & \text{Rostock}
+              & & c
+          \end{array}
+        \end{align*}
+    \end{description}
+
+  \item Zweite Iteration durch, die dritte folgt.
+    Das $u \in Q$ mit kleinstem $\dist[u]$ ist $a$.
+    $Q$ wird zu $\{ b, d, e, f, \text{Bangkok}\}$.
+    Wir iterieren wieder über $N^+(u) \cup Q = \{ e \}$:
+    \begin{description}
+      \item[$v := e$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[a] + \ell(a, e) & < d[e]\\
+          3 + \num{4,9} & < \num{5,9} \quad \falsch
+        \end{align*}
+        Also muss nichts aktualisiert werden.
+    \end{description}
+
+  \item Das $u \in Q$ mit kleinstem $\dist[u]$ ist $e$.
+    $Q$ wird zu $\{ b, d, f, \text{Bangkok}\}$.
+    Wir iterieren über $N^+(u) \cup Q = \{ b, \text{Bangkok} \}$:
+    \begin{description}
+      \item[$v := b$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[e] + \ell(e, b) & < d[b]\\
+          \num{5,9} + \num{1,9} & < \num{8} \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[b] & := \dist[e] + \ell(e, b)
+            = \num{5,9} + \num{1,9} = \num{7,8}\\
+          \vor[b] & := e
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \num{7,8} & 1 & \infty & \num{5,9} & \infty & \infty\\
+            \vor[v]:
+              & \nil & \text{Rostock} & e & \text{Rostock} & & c
+          \end{array}
+        \end{align*}
+
+      \item[$v := \textnormal{Bangkok}$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[e] + \ell(e, \text{Bangkok}) & < d[\text{Bangkok}]\\
+          \num{5,9} + \num{9,4} & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[\text{Bangkok}] & := \dist[e] + \ell(e, \text{Bangkok})
+            = \num{5,9} + \num{9,4}= \num{15,3}\\
+          \vor[\text{Bangkok}] & := e
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \num{7,8} & 1 & \infty & \num{5,9} & \infty & \num{15,3}\\
+            \vor[v]:
+              & \nil & \text{Rostock} & e & \text{Rostock} & & c & & e
+          \end{array}
+        \end{align*}
+    \end{description}
+
+  \item Das $u \in Q$ mit kleinstem $\dist[u]$ ist $b$.
+    $Q$ wird zu $\{ d, f, \text{Bangkok}\}$.
+    Wir iterieren über $N^+(u) \cup Q = \{ d, f \}$:
+
+    \begin{description}
+      \item[$v := d$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[b] + \ell(b, d) & < d[d]\\
+          \num{7,8} + \num{5,5} & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[d] & := \dist[b] + \ell(b, d)
+            = \num{7,8} + \num{5,5}= \num{13,3}\\
+          \vor[d] & := b
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \num{6,8} & 1 & \num{13,3} & \num{5,9} & \infty & \num{14,3}\\
+            \vor[v]:
+              & \nil & \text{Rostock} & e & \text{Rostock} & b & c & & e
+          \end{array}
+        \end{align*}
+
+      \item[$v := f$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[b] + \ell(b, f) & < d[f]\\
+          \num{7,8} + \num{3,7} & < \infty \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[f] & := \dist[b] + \ell(b, f)
+            = \num{7,8} + \num{3,7}= \num{11,5}\\
+          \vor[f] & := b
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \num{7,8} & 1 & \num{13,3} & \num{5,9} & \num{11,5} & \num{15,3}\\
+            \vor[v]:
+              & \nil & \text{Rostock} & e & \text{Rostock} & b & c & b & e
+          \end{array}
+        \end{align*}
+    \end{description}
+
+  \item Das $u \in Q$ mit kleinstem $\dist[u]$ ist $f$.
+    $Q$ wird zu $\{ d, \text{Bangkok}\}$.
+    Wir iterieren über $N^+(u) \cup Q = \{ \text{Bangkok} \}$:
+
+    \begin{description}
+      \item[$v := \textnormal{Bangkok}$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[f] + \ell(f, \text{Bangkok}) & < d[\text{Bangkok}]\\
+          \num{11,5} + \num{3,5} & < \num{15,3} \quad \richtig
+        \end{align*}
+        Also müssen wir $\dist$ und $\vor$ aktualisieren:
+        \begin{align*}
+          \dist[\text{Bangkok}] & := \dist[f] + \ell(f, \text{Bangkok})
+            = \num{11,5} + \num{3,5}= \num{15}\\
+          \vor[\text{Bangkok}] & := f
+        \end{align*}
+        Der Überblick:
+        \begin{align*}
+          \begin{array}{lcccccccc}
+            v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+            \midrule
+            \dist[v]:
+              & 0 & 3 & \num{7,8} & 1 & \num{13,3} & \num{5,9} & \num{11,5} & \num{15}\\
+            \vor[v]:
+              & \nil & \text{Rostock} & e & \text{Rostock} & b & c & b & f
+          \end{array}
+        \end{align*}
+    \end{description}
+
+  \item Das $u \in Q$ mit kleinstem $\dist[u]$ ist $d$.
+    $Q$ wird zu $\{ \text{Bangkok}\}$.
+    Wir iterieren über $N^+(u) \cup Q = \{ \text{Bangkok} \}$:
+
+    \begin{description}
+      \item[$v := \textnormal{Bangkok}$:] $\dist[u] + \ell(u, v) < d[v]$?
+        \begin{align*}
+          \dist[d] + \ell(d, \text{Bangkok}) & < d[\text{Bangkok}]\\
+          \num{13,3} + \num{1,7} & < \num{15} \quad \falsch
+        \end{align*}
+        Also müssen wir nichts aktualisieren.
+    \end{description}
+
+  \item Bleibt zuletzt $u := \text{Bangkok}$.
+    $Q$ wird zu $\emptyset$.
+    Die Menge $N^+(u) \cup Q$ ist leer, also brauchen wir nichts machen.
+\end{enumerate}
+
+Ausgehend vom letzten Überblick
+\begin{align*}
+  \begin{array}{lcccccccc}
+    v: & \text{Rostock} & a & b & c & d & e & f & \text{Bangkok}\\
+    \midrule
+    \dist[v]:
+      & 0 & 3 & \num{7,8} & 1 & \num{13,3} & \num{5,9} & \num{11,5} & \num{15}\\
+    \vor[v]:
+      & \nil & \text{Rostock} & e & \text{Rostock} & b & c & b & f
+  \end{array}
+\end{align*}
+ist der kürzeste Weg von Rostock nach Bangkok:
+\begin{align*}
+  \text{Rostock}
+    \rightarrow c
+    \rightarrow e
+    \rightarrow b
+    \rightarrow f
+    \rightarrow \text{Bangkok}
+\end{align*}
+Dieser Weg hat Kosten von $15$, also muss man mindestens \SI{15}{\percent}
+Bearbeitungsprovision bezahlen.
+
+\paragraph{Aufgabe 15}%
+\label{par:aufgabe_15}
+
+Sie möchten $100$ US Dollar für möglichst wenig Euro erwerben. Zum einen können
+Sie direkt den Preis für einen Dollar in Euro erfragen und dann den Betrag für
+100 Dollar bezahlen. Oder Sie können beispielsweise zuerst Dollar für Währung
+$x$ erstehen, anschließend $x$ für $y$ und dann erst $y$ für Euro kaufen. Dabei
+werden die $100$ US Dollar mit dem jeweiligen Wechselkurs multipliziert bis man
+am Ende Euros erhält. Natürlich soll ein möglichst günstiger Kaufweg gefunden
+werden.
+
+Einige Devisenkurse vom 21. Juni 2018 (onvista.de):
+\begin{center}
+  \begin{tabular}{lrrrrrr}
+    \toprule
+             & EUR          & USD          & RUB           & JPY            & GBP          & CHF\\
+    \midrule
+    EUR      & —            & \num{1,1546} & \num{73,5960} & \num{127,6220} & \num{0,8734} & \num{1,1496}\\
+    USD      & \num{0,8661} & —            & \num{63,7773} & \num{110,5340} & \num{0,7565} & \num{0,9954}\\
+    RUB      & \num{0,0135} & \num{0,0156} & —             & \num{1,7334}   & \num{0,0118} & \num{0,0156}\\
+    JPY      & \num{0,0078} & \num{0,0090} & \num{0,5769}  & —              & \num{0,0068} & \num{0,0090}\\
+    GBP      & \num{1,1448} & \num{1,3219} & \num{84,2200} & \num{146,1130} & —            & \num{1,3162}\\
+    CHF      & \num{0,8692} & \num{1,0042} & \num{63,9690} & \num{111,0060} & \num{0,7592} & —\\
+    \bottomrule
+  \end{tabular}
+\end{center}
+Begründen Sie, dass hier ein Kürzeste-Wege-Problem vorliegt und welches
+Lösungsverfahren Sie hierfür verwenden würden.
+
+Beginnen wir mit einem Rechenbeispiel. Wenn man direkt $100$ US Dollar für Euro
+haben möchte, dann gilt die Gleichung:
+\begin{align*}
+  \SI{100}{\USD} & = \SI{86,61}{\EUR}
+\end{align*}
+
+Schauen wir mal, was passiert, wenn wir einen Umweg gehen, so wie er in der
+Aufgabenstellung beschrieben ist (wir nehmen RUB für $x$ und JPY für $y$).
+\begin{align*}
+  \SI{100}{\USD} &
+    = 100 \cdot \SI{63,7773}{\RUB}
+    = 100 \cdot \num{63,7773} \cdot \SI{1,7334}{\JPY}
+    = 100 \cdot \num{63,7773} \cdot \num{1,7334} \cdot \SI{0,0078}{\EUR}
+    = \SI{86,23}{\EUR}
+\end{align*}
+Das wäre günstiger, als Euros direkt für US Dollar zu tauschen.
+
+Entlang des Pfades USD $\rightarrow$ RUB $\rightarrow$ JPY $\rightarrow$ EUR
+werden die Umrechnungskurse multipliziert.
+
+\end{document}
