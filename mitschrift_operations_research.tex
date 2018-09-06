@@ -32,6 +32,75 @@ a4paper, %apaper,
 
 \begin{document}
 
+\section{Theorie}%
+\label{sec:theorie}
+
+Ein lineares Optimierungsproblem oder lineares Programmierungsproblem (LP) ist
+ein Optimierugsproblem, eine lineare Funktion (die Zielfunktion) zu optimieren
+(maximieren/minimieren) unter Beachtung von linearen Restriktionen.
+
+Das Grundmodell der linearen Optimierung ist
+\begin{gather*}
+  \max \quad c_1 x_1 + c_2 x_2 + \ldots + c_n x_n\\
+  \begin{aligned}
+    \textup{unter}
+    \quad
+    a_{11} x_1 + a_{12} x_2 + \ldots + a_{1n} x_n \leq b_1\\
+    a_{21} x_1 + a_{22} x_2 + \ldots + a_{2n} x_n \leq b_2\\
+    \vdots\\
+    a_{m1} x_1 + a_{m2} x_2 + \ldots + a_{mn} x_n \leq b_m
+  \end{aligned}
+\end{gather*}
+Dabei sind
+\begin{description}
+  \item[$c_j$] Zielfunktionskoeffizienten (bekannt),
+  \item[$x_j$] Strukturvariablen,
+  \item[$a_{ij}$] technische Koeffizienten (bekannt),
+  \item[$b_i$] Kapazitäten/Restriktionswerte (bekannt),
+  \item[$x_j \geq 0$] Nichtnegativitätsbedingungen.
+\end{description}
+Die bekannten Werte $c_j, a_{ij}, b_i$ bilden zusammen eine Instanz/Eingabe des
+LP-Modells/Problems.
+
+In Vektor-Matrix-Notation geschrieben:
+\begin{gather*}
+  \max \quad c^T x\\
+  \begin{aligned}
+    \textup{unter}
+    \quad
+    Ax \leq b\\
+    x \geq 0
+  \end{aligned}
+\end{gather*}
+
+Das Grundmodell stellt keine willkürlichen Einschränkungen dar.
+\begin{itemize}
+  \item Minimierungsproblem:
+    \begin{align*}
+      \min z & = - \max (-z)
+    \end{align*}
+
+  \item Untere Abschätzung:
+    \begin{align*}
+      a_{i1} x_1 + a_{i2} x_2 + \ldots + a_{in} x_n \geq b_i
+    \end{align*}
+    ist äquivalent zu
+    \begin{align*}
+      -a_{i1} x_1 - a_{i2} x_2 - \ldots - a_{in} x_n \leq -b_i
+    \end{align*}
+
+  \item Gleichung:
+    \begin{align*}
+      a_{i1} x_1 + a_{i2} x_2 + \ldots + a_{in} x_n = b_i
+    \end{align*}
+    ist äquivalent zu
+    \begin{align*}
+      a_{i1} x_1 + a_{i2} x_2 + \ldots + a_{in} x_n \leq b_i\\
+      -a_{i1} x_1 - a_{i2} x_2 - \ldots - a_{in} x_n \leq -b_i
+    \end{align*}
+
+\end{itemize}
+
 \section{Übungen}%
 \label{sec:ubungen}
 
