@@ -15,3 +15,6 @@ lpsolve_*
 # Python-Kram:
 __pycache__/
 .ipython/
+
+# Heruntergeladene Literatur
+literatur/
